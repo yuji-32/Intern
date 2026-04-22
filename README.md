@@ -1,16 +1,70 @@
-# React + Vite
+# Intern Portfolio App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+インターン応募先の企業情報と選考予定を、まとめて管理するためのReactアプリです。
 
-Currently, two official plugins are available:
+## アプリ概要
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+就活・インターン探しでは、気になる企業を複数比較しながら、締切や面接予定も同時に管理する必要があります。  
+このアプリでは、企業情報の管理だけでなく、選考予定を企業ごとにひも付けて記録できるようにしました。
 
-## React Compiler
+「企業を探す」「比較する」「予定を管理する」を1つの画面構成の中で行えるようにしたのが特徴です。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 主な機能
 
-## Expanding the ESLint configuration
+- 企業情報の追加、編集、削除
+- 応募状況の管理
+- 締切日の登録と一覧表示
+- 企業ごとの志望度スコア管理
+- 年収期待、大手度、勤務地、働き方、興味、受かりたさ などの観点による比較
+- 企業にひも付いた予定管理
+- 面接、ES締切、説明会などの予定追加
+- localStorage を用いたデータ保存
+- データの書き出し / 読み込み / 初期化
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 工夫した点
+
+### 1. 企業情報と予定を分けずに管理できるようにした
+予定を単独で追加するのではなく、企業データにひも付けて管理できる設計にしました。  
+これにより、どの企業に対する予定なのかが分かりやすくなり、実際のインターン管理に近い使い方ができます。
+
+### 2. 比較しやすいように評価項目を分けた
+単純な企業一覧ではなく、年収期待や大手度など複数の観点で企業を比較できるようにしました。  
+また、重みを変更できるようにすることで、ユーザーごとの価値観に合わせた比較ができるようにしています。
+
+### 3. 迷わないUIを意識した
+画面上部の重複機能を減らし、Navigation を中心に画面遷移できるように整理しました。  
+その結果、今どの画面で何ができるのかが分かりやすくなりました。
+
+## 使用技術
+
+- React
+- JavaScript
+- Vite
+- CSS
+- localStorage
+
+## 画面構成
+
+- ダッシュボード
+- 企業一覧
+- 選考ボード
+- 予定管理
+- 企業追加 / 編集
+- 設定
+
+## 今後の改善案
+
+- ダッシュボードに「今日やること」を表示する
+- 予定の編集機能を追加する
+- 企業カード内に直近予定を表示する
+- Firebase などを使ってクラウド保存に対応する
+- ログイン機能を追加する
+
+## 公開URL
+
+（ここにURLを記載）
+
+## 制作背景
+
+自分自身がインターン探しを進める中で、企業比較と予定管理を別々に行うのが面倒だと感じました。  
+そこで、応募先の比較と選考管理を一体化したアプリを作ろうと思い、このアプリを制作しました。
