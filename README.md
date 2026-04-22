@@ -62,7 +62,7 @@
 
 ## 公開URL
 
-（ここにURLを記載）
+https://intern-alpha-seven.vercel.app/
 
 ## 制作背景
 
