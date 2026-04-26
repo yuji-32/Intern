@@ -1,5 +1,6 @@
 import Field from "../components/Field";
 import RatingSelect from "../components/RatingSelect";
+import { useState } from "react";
 
 export default function CompanyFormPage({
   editingId,
@@ -11,7 +12,11 @@ export default function CompanyFormPage({
   statusOptions,
   weights,
   calculateScore,
+  siteOptions,
 }) {
+
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  
   return (
     <section className="panel">
       <div className="panel-head">
@@ -54,13 +59,35 @@ export default function CompanyFormPage({
             </Field>
 
             <Field label="応募サイト名">
-              <input
-                className="field"
-                value={form.siteName}
-                onChange={(e) => handleFormChange("siteName", e.target.value)}
-                placeholder="マイナビ / OfferBox など"
-              />
-            </Field>
+  <div className="site-autocomplete">
+    <input
+      className="field"
+      value={form.siteName}
+      onChange={(e) => handleFormChange("siteName", e.target.value)}
+      onFocus={() => setShowSuggestions(true)}
+      onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+      placeholder="マイナビ / OfferBox など"
+    />
+
+    {showSuggestions && siteOptions.length > 0 && (
+      <div className="site-suggestions">
+        {siteOptions
+          .filter((site) =>
+            site.toLowerCase().includes(form.siteName.toLowerCase())
+          )
+          .map((site) => (
+            <div
+              key={site}
+              className="site-option"
+              onClick={() => handleFormChange("siteName", site)}
+            >
+              {site}
+            </div>
+          ))}
+      </div>
+    )}
+  </div>
+</Field>
 
             <Field label="締切日">
               <input

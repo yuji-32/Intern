@@ -1,4 +1,5 @@
 import Field from "../components/Field";
+import { useState } from "react";
 
 function sortEvents(list) {
   return [...list].sort((a, b) => {
@@ -16,6 +17,9 @@ export default function SchedulePage({
   handleDeleteEvent,
   resetEventForm,
 }) {
+
+  const [showTypeSuggestions, setShowTypeSuggestions] = useState(false);
+
   return (
     <section className="panel">
       <div className="panel-head">
@@ -49,34 +53,44 @@ export default function SchedulePage({
 
             <div style={{ height: 12 }} />
 
-            <Field label="予定名">
-              <input
-                className="field"
-                value={eventForm.title}
-                onChange={(e) =>
-                  setEventForm((prev) => ({ ...prev, title: e.target.value }))
-                }
-                placeholder="一次面接 / ES提出 など"
-              />
-            </Field>
-
             <div style={{ height: 12 }} />
 
-            <Field label="種類">
-              <select
-                className="select"
-                value={eventForm.type}
-                onChange={(e) =>
-                  setEventForm((prev) => ({ ...prev, type: e.target.value }))
-                }
-              >
-                {eventTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </Field>
+            <Field label="予定内容">
+  <select
+    className="select"
+    value={eventTypes.includes(eventForm.type) ? eventForm.type : "custom"}
+    onChange={(e) =>
+      setEventForm((prev) => ({
+        ...prev,
+        type: e.target.value === "custom" ? "" : e.target.value,
+      }))
+    }
+  >
+    <option value="">予定内容を選択</option>
+    {eventTypes.map((type) => (
+      <option key={type} value={type}>
+        {type}
+      </option>
+    ))}
+    <option value="custom">直接入力する</option>
+  </select>
+</Field>
+
+{!eventTypes.includes(eventForm.type) && (
+  <Field label="直接入力">
+    <input
+      className="field"
+      value={eventForm.type}
+      onChange={(e) =>
+        setEventForm((prev) => ({
+          ...prev,
+          type: e.target.value,
+        }))
+      }
+      placeholder="OB訪問 / 座談会 / 書類提出 など"
+    />
+  </Field>
+)}
 
             <div className="form-grid" style={{ marginTop: 12 }}>
               <Field label="日付">
@@ -141,7 +155,7 @@ export default function SchedulePage({
                   <div style={{ width: "100%" }}>
                     <div className="schedule-top">
                       <div>
-                        <div className="schedule-title">{event.title}</div>
+                        <div className="schedule-title">{event.type}</div>
                         <div className="schedule-meta">{event.companyName}</div>
                       </div>
 

@@ -52,7 +52,7 @@ export default function DashboardPage({ stats, formatDate, deadlineBadgeClass, d
               stats.upcomingEvents.map((event) => (
                 <SimpleRow
                   key={event.id}
-                  title={event.title}
+                  title={event.type === "その他" ? event.customType : event.type}
                   subtitle={`${event.companyName || "企業名なし"} / ${event.date}${event.time ? ` ${event.time}` : ""}`}
                   badgeClass="badge-blue"
                   badgeText={event.type}

@@ -9,7 +9,7 @@ import CompanyFormPage from "./pages/CompanyFormPage";
 import SettingsPage from "./pages/SettingsPage";
 
 const STATUS_OPTIONS = ["気になる", "応募予定", "応募済み", "面接予定", "合格", "不合格"];
-const EVENT_TYPES = ["ES締切", "面接", "説明会", "テスト", "その他"];
+const EVENT_TYPES = ["ES締切", "面接", "説明会", "テスト"];
 
 const DEFAULT_WEIGHTS = {
   salary: 3,
@@ -41,9 +41,8 @@ const EMPTY_FORM = {
 };
 
 const EMPTY_EVENT_FORM = {
-  title: "",
   companyId: "",
-  type: "面接",
+  type: "",
   date: "",
   time: "",
   memo: "",
@@ -96,7 +95,6 @@ const SAMPLE_EVENTS = [
   {
     id: "event-1",
     companyId: "sample-rakuten",
-    title: "ES提出",
     type: "ES締切",
     date: "2026-05-08",
     time: "23:59",
@@ -105,7 +103,6 @@ const SAMPLE_EVENTS = [
   {
     id: "event-2",
     companyId: "sample-nttdata",
-    title: "説明会参加",
     type: "説明会",
     date: "2026-05-12",
     time: "14:00",
@@ -228,6 +225,14 @@ export default function App() {
     }));
   }, [companies, weights, events]);
 
+  const siteOptions = useMemo(() => {
+    const sites = companies
+    .map((company) => company.siteName)
+    .filter((site) => site && site.trim() !== "");
+    
+    return [...new Set(sites)];
+  }, [companies]);
+
   const eventListWithCompany = useMemo(() => {
     return sortEvents(events).map((event) => {
       const company = companies.find((c) => c.id === event.companyId);
@@ -336,9 +341,8 @@ export default function App() {
 
   function startCreateEvent(company) {
     setEventForm({
-      title: "",
       companyId: company.id,
-      type: "面接",
+      type: "",
       date: "",
       time: "",
       memo: "",
@@ -403,8 +407,13 @@ export default function App() {
   function handleAddEvent(e) {
     e.preventDefault();
 
-    if (!eventForm.companyId || !eventForm.title.trim() || !eventForm.date) {
-      alert("企業・予定名・日付は必須です。");
+    if (!eventForm.companyId || !eventForm.type.trim() || !eventForm.date) {
+      alert("企業・予定内容・日付は必須です。");
+      return;
+    }
+
+    if (eventForm.type === "その他" && !eventForm.customType.trim()) {
+      alert("その他の場合は予定内容を入力してください。");
       return;
     }
 
@@ -610,6 +619,7 @@ export default function App() {
                 statusOptions={STATUS_OPTIONS}
                 weights={weights}
                 calculateScore={calculateScore}
+                siteOptions={siteOptions}
               />
             )}
 
