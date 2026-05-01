@@ -412,11 +412,6 @@ export default function App() {
       return;
     }
 
-    if (eventForm.type === "その他" && !eventForm.customType.trim()) {
-      alert("その他の場合は予定内容を入力してください。");
-      return;
-    }
-
     const newEvent = {
       ...eventForm,
       id: crypto.randomUUID(),
@@ -497,16 +492,12 @@ export default function App() {
     <div className="app-shell">
       <div className="app-inner">
         <header className="hero hero-simple">
-          <div className="hero-kicker">Intern Portfolio App</div>
-          <h1 className="hero-title">インターンを探す、比べる、管理する</h1>
-          <p className="hero-desc">
-            企業情報と選考予定をひも付けて、まとめて管理できるようにした。
-          </p>
+          <h1 className="hero-title">インターントラッカー</h1>
         </header>
 
         <div className="layout">
           <aside className="sidebar">
-            <div className="sidebar-label">Navigation</div>
+            <div className="sidebar-label">メニュー</div>
 
             <div className="nav-list">
               <button
@@ -541,7 +532,7 @@ export default function App() {
                 className={`nav-btn ${page === "form" ? "active" : ""}`}
                 onClick={startCreate}
               >
-                企業追加 / 編集
+                企業追加
               </button>
 
               <button
