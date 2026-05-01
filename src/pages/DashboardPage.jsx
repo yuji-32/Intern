@@ -5,10 +5,7 @@ export default function DashboardPage({ stats, formatDate, deadlineBadgeClass, d
   return (
     <section className="panel">
       <div className="panel-head">
-        <div className="panel-title">まず何をすればいいか</div>
-        <div className="panel-subtitle">
-          この画面では全体状況を見る。次の行動は上の3つのボタンから選べる。
-        </div>
+        <div className="panel-title">ダッシュボード</div>
       </div>
 
       <div className="grid-stats">
@@ -24,7 +21,6 @@ export default function DashboardPage({ stats, formatDate, deadlineBadgeClass, d
       <div className="grid-2">
         <div className="box">
           <div className="box-title">締切が近い企業</div>
-          <div className="box-subtitle">見落とさないように先に確認する。</div>
           <div className="row-list">
             {stats.urgentThree.length === 0 ? (
               <div className="empty">表示する企業がありません。</div>
@@ -44,7 +40,6 @@ export default function DashboardPage({ stats, formatDate, deadlineBadgeClass, d
 
         <div className="box">
           <div className="box-title">直近の予定</div>
-          <div className="box-subtitle">ESや面接の予定をここで確認する。</div>
           <div className="row-list">
             {stats.upcomingEvents.length === 0 ? (
               <div className="empty">予定はまだありません。</div>

@@ -1,5 +1,3 @@
-import MiniBox from "./MiniBox";
-
 export default function CompanyCard({
   company,
   onEdit,
@@ -10,6 +8,15 @@ export default function CompanyCard({
   formatDate,
   getStatusBadgeClass,
 }) {
+  const nextEvent = company.relatedEvents?.length
+    ? [...company.relatedEvents].sort((a, b) => {
+        return (
+          new Date(`${a.date}T${a.time || "23:59"}`) -
+          new Date(`${b.date}T${b.time || "23:59"}`)
+        );
+      })[0]
+    : null;
+
   return (
     <div className="company-card">
       <div className="company-head">
@@ -18,8 +25,19 @@ export default function CompanyCard({
           <div className="company-role">{company.internshipTitle}</div>
         </div>
 
-        <div className="score-pill">{company.score}点</div>
+        <div className="score-pill small">志望度 {company.score}</div>
       </div>
+
+      {nextEvent && (
+        <div className="next-event-box">
+          <div className="next-event-label">次の予定</div>
+          <div className="next-event-title">{nextEvent.type}</div>
+          <div className="next-event-date">
+            {nextEvent.date}
+            {nextEvent.time ? ` ${nextEvent.time}` : ""}
+          </div>
+        </div>
+      )}
 
       <div className="tag-row">
         <span className={`badge ${getStatusBadgeClass(company.status)}`}>
@@ -56,23 +74,9 @@ export default function CompanyCard({
         )}
       </div>
 
-      <div className="mini-grid">
-        <MiniBox label="年収" value={company.ratings.salary} />
-        <MiniBox label="大手" value={company.ratings.companySize} />
-        <MiniBox label="勤務地" value={company.ratings.location} />
-        <MiniBox label="働き方" value={company.ratings.workStyle} />
-        <MiniBox label="興味" value={company.ratings.interest} />
-        <MiniBox label="受かりたさ" value={company.ratings.motivation} />
-      </div>
-
       <div className="card-actions" style={{ marginTop: 16 }}>
         {company.url && (
-          <a
-            className="link-btn"
-            href={company.url}
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="link-btn" href={company.url} target="_blank" rel="noreferrer">
             募集ページを見る
           </a>
         )}

@@ -13,9 +13,6 @@ export default function SettingsPage({
     <section className="panel">
       <div className="panel-head">
         <div className="panel-title">設定</div>
-        <div className="panel-subtitle">
-          志望度の重みやデータ管理をここでまとめて行う。
-        </div>
       </div>
 
       <div className="section">

@@ -24,9 +24,6 @@ export default function SchedulePage({
     <section className="panel">
       <div className="panel-head">
         <div className="panel-title">予定管理</div>
-        <div className="panel-subtitle">
-          企業とひも付いた予定を追加して管理する。
-        </div>
       </div>
 
       <div className="schedule-grid">

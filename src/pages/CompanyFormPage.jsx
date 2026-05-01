@@ -21,9 +21,6 @@ export default function CompanyFormPage({
     <section className="panel">
       <div className="panel-head">
         <div className="panel-title">{editingId ? "企業を編集" : "企業を追加"}</div>
-        <div className="panel-subtitle">
-          このページでは登録に必要な情報だけを順番に入力する。
-        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -153,9 +150,6 @@ export default function CompanyFormPage({
 
         <div className="section">
           <div className="section-title">志望度評価</div>
-          <div className="panel-subtitle" style={{ marginBottom: 14 }}>
-            重み設定を反映したスコアが自動で計算される。
-          </div>
 
           <div style={{ marginBottom: 16 }}>
             <span className="badge badge-neutral">

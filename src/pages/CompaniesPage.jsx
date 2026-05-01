@@ -22,9 +22,6 @@ export default function CompaniesPage({
     <section className="panel">
       <div className="panel-head">
         <div className="panel-title">企業一覧</div>
-        <div className="panel-subtitle">
-          検索、絞り込み、並び替えで比較しやすくする。
-        </div>
       </div>
 
       <div className="tools">

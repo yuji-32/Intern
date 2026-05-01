@@ -10,9 +10,6 @@ export default function KanbanPage({
     <section className="panel">
       <div className="panel-head">
         <div className="panel-title">選考ボード</div>
-        <div className="panel-subtitle">
-          今どの企業がどの段階かを確認する。
-        </div>
       </div>
 
       <div className="kanban">
