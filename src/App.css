@@ -178,8 +178,15 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--line);
   border-radius: 14px;
   background: white;
+  color: #111827;
+  caret-color: #111827;
   padding: 13px 14px;
   outline: none;
+}
+
+.field::placeholder,
+.textarea::placeholder {
+  color: #9ca3af;
 }
 
 .field:focus, .textarea:focus, .select:focus { border-color: #94a3b8; }
