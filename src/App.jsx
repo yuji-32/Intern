@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 import DashboardPage from "./pages/DashboardPage";
@@ -6,19 +6,9 @@ import CompaniesPage from "./pages/CompaniesPage";
 import KanbanPage from "./pages/KanbanPage";
 import SchedulePage from "./pages/SchedulePage";
 import CompanyFormPage from "./pages/CompanyFormPage";
-import SettingsPage from "./pages/SettingsPage";
 
 const STATUS_OPTIONS = ["気になる", "応募予定", "応募済み", "面接予定", "合格", "不合格"];
 const EVENT_TYPES = ["ES締切", "面接", "説明会", "テスト"];
-
-const DEFAULT_WEIGHTS = {
-  salary: 3,
-  companySize: 2,
-  location: 1,
-  workStyle: 1,
-  interest: 1,
-  motivation: 2,
-};
 
 const EMPTY_FORM = {
   companyName: "",
@@ -26,18 +16,13 @@ const EMPTY_FORM = {
   url: "",
   siteName: "",
   deadline: "",
+  internshipStart: "",
+  internshipEnd: "",
   status: "気になる",
   locationText: "",
   paid: false,
   memo: "",
-  ratings: {
-    salary: 3,
-    companySize: 3,
-    location: 3,
-    workStyle: 3,
-    interest: 3,
-    motivation: 3,
-  },
+  priority: 3,
 };
 
 const EMPTY_EVENT_FORM = {
@@ -56,18 +41,13 @@ const SAMPLE_COMPANIES = [
     url: "",
     siteName: "OpenWork",
     deadline: "2026-05-10",
+    internshipStart: "",
+    internshipEnd: "",
     status: "応募予定",
     locationText: "東京",
     paid: true,
-    memo: "大手寄り。Web系。年収も高そう。",
-    ratings: {
-      salary: 5,
-      companySize: 5,
-      location: 4,
-      workStyle: 3,
-      interest: 3,
-      motivation: 4,
-    },
+    memo: "大手寄り。Web系。",
+    priority: 4,
   },
   {
     id: "sample-nttdata",
@@ -76,18 +56,13 @@ const SAMPLE_COMPANIES = [
     url: "",
     siteName: "マイナビ",
     deadline: "2026-05-25",
+    internshipStart: "",
+    internshipEnd: "",
     status: "気になる",
     locationText: "東京",
     paid: false,
     memo: "安定感がある。大手。",
-    ratings: {
-      salary: 4,
-      companySize: 5,
-      location: 4,
-      workStyle: 4,
-      interest: 3,
-      motivation: 4,
-    },
+    priority: 3,
   },
 ];
 
@@ -124,12 +99,6 @@ function saveToStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {}
-}
-
-function calculateScore(ratings, weights) {
-  return Object.keys(ratings).reduce((sum, key) => {
-    return sum + ratings[key] * weights[key];
-  }, 0);
 }
 
 function formatDate(dateString) {
@@ -178,22 +147,22 @@ function getStatusBadgeClass(status) {
 
 function sortEvents(list) {
   return [...list].sort((a, b) => {
-    return new Date(`${a.date}T${a.time || "23:59"}`) - new Date(`${b.date}T${b.time || "23:59"}`);
+    return (
+      new Date(`${a.date}T${a.time || "23:59"}`) -
+      new Date(`${b.date}T${b.time || "23:59"}`)
+    );
   });
 }
 
 export default function App() {
-  const fileInputRef = useRef(null);
-
   const [page, setPage] = useState("dashboard");
+
   const [companies, setCompanies] = useState(() =>
     loadFromStorage("intern_companies", SAMPLE_COMPANIES)
   );
+
   const [events, setEvents] = useState(() =>
     loadFromStorage("intern_events", SAMPLE_EVENTS)
-  );
-  const [weights, setWeights] = useState(() =>
-    loadFromStorage("intern_weights", DEFAULT_WEIGHTS)
   );
 
   const [form, setForm] = useState(EMPTY_FORM);
@@ -212,24 +181,20 @@ export default function App() {
     saveToStorage("intern_events", events);
   }, [events]);
 
-  useEffect(() => {
-    saveToStorage("intern_weights", weights);
-  }, [weights]);
-
   const companiesWithMeta = useMemo(() => {
     return companies.map((company) => ({
       ...company,
-      score: calculateScore(company.ratings, weights),
+      score: company.priority || 3,
       daysLeft: daysUntil(company.deadline),
       relatedEvents: events.filter((event) => event.companyId === company.id),
     }));
-  }, [companies, weights, events]);
+  }, [companies, events]);
 
   const siteOptions = useMemo(() => {
     const sites = companies
-    .map((company) => company.siteName)
-    .filter((site) => site && site.trim() !== "");
-    
+      .map((company) => company.siteName)
+      .filter((site) => site && site.trim() !== "");
+
     return [...new Set(sites)];
   }, [companies]);
 
@@ -255,7 +220,8 @@ export default function App() {
         .toLowerCase();
 
       const matchText = text.includes(searchText.toLowerCase());
-      const matchStatus = statusFilter === "すべて" || company.status === statusFilter;
+      const matchStatus =
+        statusFilter === "すべて" || company.status === statusFilter;
 
       return matchText && matchStatus;
     });
@@ -265,6 +231,7 @@ export default function App() {
       if (sortType === "company") {
         return a.companyName.localeCompare(b.companyName, "ja");
       }
+
       return (
         (a.deadline ? new Date(a.deadline).getTime() : Infinity) -
         (b.deadline ? new Date(b.deadline).getTime() : Infinity)
@@ -279,9 +246,6 @@ export default function App() {
     const applied = companiesWithMeta.filter((c) => c.status === "応募済み").length;
     const interview = companiesWithMeta.filter((c) => c.status === "面接予定").length;
     const passed = companiesWithMeta.filter((c) => c.status === "合格").length;
-    const average = total
-      ? Math.round(companiesWithMeta.reduce((sum, c) => sum + c.score, 0) / total)
-      : 0;
 
     const urgentThree = [...companiesWithMeta]
       .filter((c) => c.deadline)
@@ -295,7 +259,6 @@ export default function App() {
       applied,
       interview,
       passed,
-      average,
       urgentThree,
       upcomingEvents,
     };
@@ -305,23 +268,6 @@ export default function App() {
     setForm((prev) => ({
       ...prev,
       [key]: value,
-    }));
-  }
-
-  function handleRatingChange(key, value) {
-    setForm((prev) => ({
-      ...prev,
-      ratings: {
-        ...prev.ratings,
-        [key]: Number(value),
-      },
-    }));
-  }
-
-  function handleWeightChange(key, value) {
-    setWeights((prev) => ({
-      ...prev,
-      [key]: Number(value),
     }));
   }
 
@@ -353,18 +299,22 @@ export default function App() {
 
   function handleEdit(company) {
     setEditingId(company.id);
+
     setForm({
       companyName: company.companyName,
       internshipTitle: company.internshipTitle,
       url: company.url,
       siteName: company.siteName,
       deadline: company.deadline,
+      internshipStart: company.internshipStart || "",
+      internshipEnd: company.internshipEnd || "",
       status: company.status,
       locationText: company.locationText,
       paid: company.paid,
       memo: company.memo,
-      ratings: { ...company.ratings },
+      priority: company.priority || 3,
     });
+
     setPage("form");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -397,6 +347,7 @@ export default function App() {
       if (editingId) {
         return prev.map((c) => (c.id === editingId ? payload : c));
       }
+
       return [payload, ...prev];
     });
 
@@ -431,61 +382,9 @@ export default function App() {
 
     setCompanies(SAMPLE_COMPANIES);
     setEvents(SAMPLE_EVENTS);
-    setWeights(DEFAULT_WEIGHTS);
     resetForm();
     resetEventForm();
     setPage("dashboard");
-  }
-
-  function exportData() {
-    const blob = new Blob(
-      [
-        JSON.stringify(
-          {
-            companies,
-            events,
-            weights,
-            exportedAt: new Date().toISOString(),
-          },
-          null,
-          2
-        ),
-      ],
-      { type: "application/json" }
-    );
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "intern-tracker-data.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function importData(event) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      try {
-        const parsed = JSON.parse(e.target?.result);
-
-        if (Array.isArray(parsed.companies)) setCompanies(parsed.companies);
-        if (Array.isArray(parsed.events)) setEvents(parsed.events);
-        if (parsed.weights && typeof parsed.weights === "object") {
-          setWeights(parsed.weights);
-        }
-
-        alert("データを読み込みました。");
-      } catch {
-        alert("JSONの読み込みに失敗しました。");
-      }
-    };
-
-    reader.readAsText(file);
-    event.target.value = "";
   }
 
   return (
@@ -534,12 +433,15 @@ export default function App() {
               >
                 企業追加
               </button>
+            </div>
 
+            <div className="sidebar-actions">
               <button
-                className={`nav-btn ${page === "settings" ? "active" : ""}`}
-                onClick={() => setPage("settings")}
+                className="link-btn btn-danger"
+                type="button"
+                onClick={resetAllData}
               >
-                設定
+                全データ削除
               </button>
             </div>
           </aside>
@@ -590,6 +492,7 @@ export default function App() {
               <SchedulePage
                 events={eventListWithCompany}
                 companies={companies}
+                companiesWithMeta={companiesWithMeta}
                 eventForm={eventForm}
                 setEventForm={setEventForm}
                 eventTypes={EVENT_TYPES}
@@ -604,37 +507,14 @@ export default function App() {
                 editingId={editingId}
                 form={form}
                 handleFormChange={handleFormChange}
-                handleRatingChange={handleRatingChange}
                 handleSubmit={handleSubmit}
                 resetForm={resetForm}
                 statusOptions={STATUS_OPTIONS}
-                weights={weights}
-                calculateScore={calculateScore}
                 siteOptions={siteOptions}
-              />
-            )}
-
-            {page === "settings" && (
-              <SettingsPage
-                weights={weights}
-                handleWeightChange={handleWeightChange}
-                setWeights={setWeights}
-                defaultWeights={DEFAULT_WEIGHTS}
-                onExport={exportData}
-                onReset={resetAllData}
-                onOpenImport={() => fileInputRef.current?.click()}
               />
             )}
           </main>
         </div>
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="application/json"
-          className="hidden"
-          onChange={importData}
-        />
       </div>
     </div>
   );

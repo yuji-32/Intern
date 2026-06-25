@@ -13,7 +13,6 @@ export default function DashboardPage({ stats, formatDate, deadlineBadgeClass, d
         <StatCard label="応募済み" value={stats.applied} />
         <StatCard label="面接予定" value={stats.interview} />
         <StatCard label="合格" value={stats.passed} />
-        <StatCard label="平均志望度" value={`${stats.average}点`} />
       </div>
 
       <div style={{ height: 16 }} />

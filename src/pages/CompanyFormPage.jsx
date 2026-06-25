@@ -1,22 +1,17 @@
 import Field from "../components/Field";
-import RatingSelect from "../components/RatingSelect";
 import { useState } from "react";
 
 export default function CompanyFormPage({
   editingId,
   form,
   handleFormChange,
-  handleRatingChange,
   handleSubmit,
   resetForm,
   statusOptions,
-  weights,
-  calculateScore,
   siteOptions,
 }) {
-
   const [showSuggestions, setShowSuggestions] = useState(false);
-  
+
   return (
     <section className="panel">
       <div className="panel-head">
@@ -56,35 +51,35 @@ export default function CompanyFormPage({
             </Field>
 
             <Field label="応募サイト名">
-  <div className="site-autocomplete">
-    <input
-      className="field"
-      value={form.siteName}
-      onChange={(e) => handleFormChange("siteName", e.target.value)}
-      onFocus={() => setShowSuggestions(true)}
-      onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-      placeholder="マイナビ / OfferBox など"
-    />
+              <div className="site-autocomplete">
+                <input
+                  className="field"
+                  value={form.siteName}
+                  onChange={(e) => handleFormChange("siteName", e.target.value)}
+                  onFocus={() => setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                  placeholder="マイナビ / OfferBox など"
+                />
 
-    {showSuggestions && siteOptions.length > 0 && (
-      <div className="site-suggestions">
-        {siteOptions
-          .filter((site) =>
-            site.toLowerCase().includes(form.siteName.toLowerCase())
-          )
-          .map((site) => (
-            <div
-              key={site}
-              className="site-option"
-              onClick={() => handleFormChange("siteName", site)}
-            >
-              {site}
-            </div>
-          ))}
-      </div>
-    )}
-  </div>
-</Field>
+                {showSuggestions && siteOptions.length > 0 && (
+                  <div className="site-suggestions">
+                    {siteOptions
+                      .filter((site) =>
+                        site.toLowerCase().includes(form.siteName.toLowerCase())
+                      )
+                      .map((site) => (
+                        <div
+                          key={site}
+                          className="site-option"
+                          onClick={() => handleFormChange("siteName", site)}
+                        >
+                          {site}
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            </Field>
 
             <Field label="締切日">
               <input
@@ -92,6 +87,24 @@ export default function CompanyFormPage({
                 type="date"
                 value={form.deadline}
                 onChange={(e) => handleFormChange("deadline", e.target.value)}
+              />
+            </Field>
+
+            <Field label="インターン開始日">
+              <input
+                className="field"
+                type="date"
+                value={form.internshipStart}
+                onChange={(e) => handleFormChange("internshipStart", e.target.value)}
+              />
+            </Field>
+
+            <Field label="インターン終了日">
+              <input
+                className="field"
+                type="date"
+                value={form.internshipEnd}
+                onChange={(e) => handleFormChange("internshipEnd", e.target.value)}
               />
             </Field>
 
@@ -124,6 +137,20 @@ export default function CompanyFormPage({
               </select>
             </Field>
 
+            <Field label="志望度">
+              <select
+                className="select"
+                value={form.priority}
+                onChange={(e) => handleFormChange("priority", Number(e.target.value))}
+              >
+                <option value={5}>★★★★★ 第一志望</option>
+                <option value={4}>★★★★☆ かなり行きたい</option>
+                <option value={3}>★★★☆☆ 普通</option>
+                <option value={2}>★★☆☆☆ 少し気になる</option>
+                <option value={1}>★☆☆☆☆ とりあえず</option>
+              </select>
+            </Field>
+
             <Field label="報酬">
               <label className="checkbox-row">
                 <input
@@ -144,49 +171,6 @@ export default function CompanyFormPage({
               value={form.memo}
               onChange={(e) => handleFormChange("memo", e.target.value)}
               placeholder="志望理由や面接メモなど"
-            />
-          </div>
-        </div>
-
-        <div className="section">
-          <div className="section-title">志望度評価</div>
-
-          <div style={{ marginBottom: 16 }}>
-            <span className="badge badge-neutral">
-              現在の志望度 {calculateScore(form.ratings, weights)}点
-            </span>
-          </div>
-
-          <div className="form-grid">
-            <RatingSelect
-              label="年収期待"
-              value={form.ratings.salary}
-              onChange={(v) => handleRatingChange("salary", v)}
-            />
-            <RatingSelect
-              label="大手度"
-              value={form.ratings.companySize}
-              onChange={(v) => handleRatingChange("companySize", v)}
-            />
-            <RatingSelect
-              label="勤務地の良さ"
-              value={form.ratings.location}
-              onChange={(v) => handleRatingChange("location", v)}
-            />
-            <RatingSelect
-              label="働き方の良さ"
-              value={form.ratings.workStyle}
-              onChange={(v) => handleRatingChange("workStyle", v)}
-            />
-            <RatingSelect
-              label="業務への興味"
-              value={form.ratings.interest}
-              onChange={(v) => handleRatingChange("interest", v)}
-            />
-            <RatingSelect
-              label="受かりたさ"
-              value={form.ratings.motivation}
-              onChange={(v) => handleRatingChange("motivation", v)}
             />
           </div>
         </div>
